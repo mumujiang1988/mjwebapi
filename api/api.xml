@@ -34,6 +34,48 @@
             <param name="result">待解密的密文</param>
             <returns>解密后的字符串</returns>
         </member>
+        <member name="T:ini.INIFile">
+            <summary>
+            INI文件读写类。
+            </summary>
+        </member>
+        <member name="M:ini.INIFile.IniWriteValue(System.String,System.String,System.String)">
+            <summary>
+            写INI文件
+            </summary>
+            <param name="Section"></param>
+            <param name="Key"></param>
+            <param name="Value"></param>
+        </member>
+        <member name="M:ini.INIFile.IniReadValue(System.String,System.String)">
+            <summary>
+            读取INI文件
+            </summary>
+            <param name="Section"></param>
+            <param name="Key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ini.INIFile.ClearAllSection">
+            <summary>
+            删除ini文件下所有段落
+            </summary>
+        </member>
+        <member name="M:ini.INIFile.ClearSection(System.String)">
+            <summary>
+            删除ini文件下personal段落下的所有键
+            </summary>
+            <param name="Section"></param>
+        </member>
+        <member name="T:sqlcon">
+            <summary>
+            连接字符串
+            </summary>
+        </member>
+        <member name="M:sqlcon.consql">
+            <summary>
+            连接字符串
+            </summary>
+        </member>
         <member name="T:SqlHelper">
              <summary>
             第二步： 把命名空间删掉，使得我们在以后的开发中不用去创建一个sqlhelper类的对象和引用它的命名空间。实现直接调用
@@ -66,6 +108,11 @@
         <member name="T:api.Controllers.userinfo">
             <summary>
             post 用户信息
+            </summary>
+        </member>
+        <member name="P:api.Controllers.userinfo.code">
+            <summary>
+            code
             </summary>
         </member>
         <member name="P:api.Controllers.userinfo.name">
@@ -108,12 +155,6 @@
             用户控制器
             </summary>
         </member>
-        <member name="M:api.Controllers.usersController.Get">
-            <summary>
-            GET: api/users
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:api.Controllers.usersController.Get(System.Int32)">
             <summary>
               GET: api/users/id  获取用户信息
@@ -126,9 +167,9 @@
             <response code="200">返回用户信息</response> 
             <response code="201">如果id为空</response>  
         </member>
-        <member name="M:api.Controllers.usersController.logonPost">
+        <member name="M:api.Controllers.usersController.loginPost">
             <summary>
-             POST:api/users/logon 登录处理 返回令牌 
+             POST:api/users/login 登录处理 返回令牌 
             </summary>
             <remarks> 
             登录处理 返回令牌 

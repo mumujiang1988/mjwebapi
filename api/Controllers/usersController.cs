@@ -4,14 +4,15 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ini;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace api.Controllers
 {
-
-
+   
     //实体类
     #region
     /// <summary>
@@ -31,8 +32,11 @@ namespace api.Controllers
     /// <summary>
     /// post 用户信息
     /// </summary>
-    public class userinfo  
-    {
+    public class userinfo
+    {/// <summary>
+    /// code
+    /// </summary>
+        public string code { get; set; }
         /// <summary>
         /// 姓名
         /// </summary>
@@ -68,7 +72,9 @@ namespace api.Controllers
     }
 
 
+
     #endregion
+    //===============================================================================================
 
     /// <summary>
     /// 用户控制器
@@ -76,21 +82,9 @@ namespace api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class usersController : ControllerBase
-    {
-        /// <summary>
-        /// GET: api/users
-        /// </summary>
-        /// <returns></returns>
+    {   
+        //=============================================================================================== get获取用户信息
          
-        [HttpGet]
-        public  string  Get()
-        {
-            user userjson = new user();
-             userjson.username="stt";
-            userjson.password= "stt";
-            return JsonConvert.SerializeObject(userjson); ;
-        }
-
         /// <summary>
         ///   GET: api/users/id  获取用户信息
         /// </summary>
@@ -104,16 +98,19 @@ namespace api.Controllers
         [HttpGet("{id}", Name = "Get")]
         public string Get(int id)
         {
-            string sql = "select * from web_hr_users where id ='"+id+"'";
-            //SqlHelper.connstr = "Data Source=.SQLEXPRESS;Initial Catalog=MjWeb;User ID=sa;Password =junsu";
-            SqlHelper.connstr = "Data Source =.\\SQLEXPRESS; Initial Catalog = MjWeb; User ID = sa; Password = junsu";
-            DataTable user = SqlHelper.GetTable(sql);
-            return JsonConvert.SerializeObject(user);
+           SqlHelper.connstr= sqlcon.consql();
+            string sql = "select * from web_hr_users where id ='"+id+"'";  
+            DataTable userdt = SqlHelper.GetTable(sql);
+            user userjson = new user();
+            userjson.username = userdt.Rows[0]["worknu"].ToString();
+            userjson.password = userdt.Rows[0]["password"].ToString(); 
+            return JsonConvert.SerializeObject(userjson);
             //return "cs";
         }
+        //=============================================================================================== post 登录
 
         /// <summary>
-        ///  POST:api/users/logon 登录处理 返回令牌 
+        ///  POST:api/users/login 登录处理 返回令牌 
         /// </summary>
         /// <remarks> 
         /// 登录处理 返回令牌 
@@ -122,8 +119,8 @@ namespace api.Controllers
         /// <response code="201">返回失败</response>  
         /// <returns>返回令牌 </returns>
 
-        [HttpPost("logon", Name = "logonPost")]
-        public string logonPost()//登录
+        [HttpPost("login", Name = "loginPost")]
+        public string loginPost()//登录
         {
             string body = new StreamReader(Request.Body).ReadToEnd();
             //Console.WriteLine(userjson);
@@ -132,19 +129,19 @@ namespace api.Controllers
             string password = userjson.password;  
             string Token = ""; //令牌
             Tokenstr Tokenstr = new Tokenstr();
-            string sql = "select * from web_hr_users where 工号='" + username + "'and 密码='" +  password + "'";
-            SqlHelper.connstr = "Data Source=localhost;Initial Catalog=MjWeb;User ID=sa;Password =junsu";
+
+            SqlHelper.connstr = sqlcon.consql();
+            string sql = "select * from web_hr_users where worknu='" + username + "'and password='" +  password + "'"; 
             DataTable user = SqlHelper.GetTable(sql);
             if (user.Rows.Count > 0)
             {
-                var signature = user.Rows[0]["工号"].ToString() + "-" + user.Rows[0]["roles"].ToString();
+                var signature = user.Rows[0]["worknu"].ToString() + "-"+ user.Rows[0]["name"].ToString() + "-" + user.Rows[0]["roles"].ToString() + "-" + user.Rows[0]["avatar"].ToString();
                 Token = TokenHelper.Generate(signature);
-                HttpContext.Session.SetString(signature, Token);
-
+                HttpContext.Session.SetString( Token, signature); 
                 Tokenstr.code = "20000";
                 Tokenstr.data = Token;
                 Tokenstr.msg = "返回令牌成功";
-
+             
             }
             else
             {
@@ -156,6 +153,7 @@ namespace api.Controllers
 
             return JsonConvert.SerializeObject(Tokenstr); //返回 令牌字典json
         }
+        //=============================================================================================== post user info
 
         /// <summary>
         ///  POST:aapi/users/getinfo 获取用户信息 
@@ -164,22 +162,35 @@ namespace api.Controllers
         [HttpPost("getinfo", Name = "GetInfo")]
         public string getInfopost()//获取用户信息
         {
-            //string body = new StreamReader(Request.Headers).ReadToEnd();
-            string h=  Request.Headers["X-Token"];
-            //Console.WriteLine(userjson);
-           // user userjson = JsonConvert.DeserializeObject<user>(body);//反序列
+            userinfo info = new userinfo();
+            string Token =  Request.Headers["X-Token"];
+            var signature = TokenHelper.TokenToSignature(Token);
+            string Sessionsignature = HttpContext.Session.GetString(Token);
+            if (Sessionsignature == signature)
+            {
+                SqlHelper.connstr = sqlcon.consql(); 
+                string[] userinfo = signature.Split('-');
+                string sql = "select * from web_hr_users where worknu='" + userinfo[0] + "'";
+                DataTable user = SqlHelper.GetTable(sql); 
+                 info.code = "20000";
+                info.name = user.Rows[0]["name"].ToString();
+                 info.roles = user.Rows[0]["roles"].ToString();
+                info.avatar = user.Rows[0]["avatar"].ToString();
+            }
+            else
+            {
+            
+                info.code = "50008";//非法令牌
+                info.name = "";
+                info.roles = "";
+                info.avatar = "";
+            }
 
-
-
-         //   userinfo info = new userinfo();
-         //   info.name =;
-         //   info.roles =;
-         //   info.avatar =;
-
-            return JsonConvert.SerializeObject(h); //返回 令牌字典json
+             
+                return JsonConvert.SerializeObject(info); //返回 令牌字典json
         }
 
-
+        //===============================================================================================
 
 
        /// <summary>

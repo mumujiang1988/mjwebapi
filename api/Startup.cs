@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,8 +37,13 @@ namespace api
        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSession();// 添加session服务
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSession();// 添加session服务 
+          // services.Configure<CookiePolicyOptions>(options =>
+          //  {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+           //     options.CheckConsentNeeded = context => false; // Default is true, make it false
+         //       options.MinimumSameSitePolicy = SameSiteMode.None;
+          //  });
 
             var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);//获取应用程序所在目录（绝对，不受工作目录影响，建议采用此方法获取路径）
             var xmlPath = Path.Combine(basePath, "api.xml"); 
@@ -45,11 +51,11 @@ namespace api
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
                 c.IncludeXmlComments(xmlPath);
-            }
-             
-            
+            } 
             );
-           
+
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// <summary>
@@ -64,8 +70,7 @@ namespace api
                 app.UseDeveloperExceptionPage();
             }
             app.UseSession();// 启用session
-            app.UseMvc();
-
+            
 
 
             var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);//获取应用程序所在目录（绝对，不受工作目录影响，建议采用此方法获取路径）
@@ -76,10 +81,12 @@ namespace api
             //启用中间件服务对swagger-ui，指定Swagger JSON终结点
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint(jsonPaths, "My API V1");
-                c.InjectJavascript("Swashbuckle.Dummy.SwaggerExtensions.zh.js");
+                c.SwaggerEndpoint(jsonPaths, "MJWEB API V1");
+                c.InjectJavascript("/Scripts/zh.js");
             });
 
+
+            app.UseMvc();
 
         }
     }
