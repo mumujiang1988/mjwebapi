@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>api</name>
+    </assembly>
+    <members>
+        <member name="M:Base64Helper.Base64Encode(System.String)">
+            <summary>
+            Base64加密，采用utf8编码方式加密
+            </summary>
+            <param name="source">待加密的明文</param>
+            <returns>加密后的字符串</returns>
+        </member>
+        <member name="M:Base64Helper.Base64Encode(System.Text.Encoding,System.String)">
+            <summary>
+            Base64加密
+            </summary>
+            <param name="encodeType">加密采用的编码方式</param>
+            <param name="source">待加密的明文</param>
+            <returns></returns>
+        </member>
+        <member name="M:Base64Helper.Base64Decode(System.String)">
+            <summary>
+            Base64解密，采用utf8编码方式解密
+            </summary>
+            <param name="result">待解密的密文</param>
+            <returns>解密后的字符串</returns>
+        </member>
+        <member name="M:Base64Helper.Base64Decode(System.Text.Encoding,System.String)">
+            <summary>
+            Base64解密
+            </summary>
+            <param name="encodeType">解密采用的编码方式，注意和加密时采用的方式一致</param>
+            <param name="result">待解密的密文</param>
+            <returns>解密后的字符串</returns>
+        </member>
+        <member name="T:SqlHelper">
+             <summary>
+            第二步： 把命名空间删掉，使得我们在以后的开发中不用去创建一个sqlhelper类的对象和引用它的命名空间。实现直接调用
+             </summary>
+        </member>
+        <member name="M:SqlHelper.ExecuteNonQuery(System.String,System.Data.SqlClient.SqlParameter[])">
+            执行查询，并返回object类型，查询所返回的结果集中第一行的第一列。
+        </member>
+        <member name="M:SqlHelper.GetTable(System.String,System.Data.SqlClient.SqlParameter[])">
+            适用于 insert delete 和update操做 返回影响行。
+        </member>
+        <member name="M:SqlHelper.GetReader(System.String,System.Data.SqlClient.SqlParameter[])">
+            DataTable dt = conn.GetTable("查询语句");这样根据查询得到一张表  例： dataGridView1.DataSource = SqlHelper.GetTable("select * from express");// 表格显示数据库内容
+        </member>
+        <member name="T:api.Controllers.user">
+            <summary>
+            post 获取的数据
+            </summary>
+        </member>
+        <member name="P:api.Controllers.user.username">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:api.Controllers.user.password">
+            <summary>
+            密码
+            </summary>
+        </member>
+        <member name="T:api.Controllers.userinfo">
+            <summary>
+            post 用户信息
+            </summary>
+        </member>
+        <member name="P:api.Controllers.userinfo.name">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="P:api.Controllers.userinfo.roles">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:api.Controllers.userinfo.avatar">
+            <summary>
+            头像地址
+            </summary>
+        </member>
+        <member name="T:api.Controllers.Tokenstr">
+            <summary>
+            令牌实体类
+            </summary>
+        </member>
+        <member name="P:api.Controllers.Tokenstr.code">
+            <summary>
+             状态码
+            </summary>
+        </member>
+        <member name="P:api.Controllers.Tokenstr.data">
+             <summary>
+            返回令牌数据
+             </summary>
+        </member>
+        <member name="P:api.Controllers.Tokenstr.msg">
+            <summary>
+            返回信息
+            </summary>
+        </member>
+        <member name="T:api.Controllers.usersController">
+            <summary>
+            用户控制器
+            </summary>
+        </member>
+        <member name="M:api.Controllers.usersController.Get">
+            <summary>
+            GET: api/users
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:api.Controllers.usersController.Get(System.Int32)">
+            <summary>
+              GET: api/users/id  获取用户信息
+            </summary>
+            <remarks> 
+            获取用户信息
+            </remarks>
+            <param name="id">用户id</param>
+            <returns>用户信息</returns>
+            <response code="200">返回用户信息</response> 
+            <response code="201">如果id为空</response>  
+        </member>
+        <member name="M:api.Controllers.usersController.logonPost">
+            <summary>
+             POST:api/users/logon 登录处理 返回令牌 
+            </summary>
+            <remarks> 
+            登录处理 返回令牌 
+            </remarks>
+            <response code="200">返回令牌 </response> 
+            <response code="201">返回失败</response>  
+            <returns>返回令牌 </returns>
+        </member>
+        <member name="M:api.Controllers.usersController.getInfopost">
+            <summary>
+             POST:aapi/users/getinfo 获取用户信息 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:api.Controllers.usersController.Put(System.Int32,System.String)">
+            <summary>
+            put
+            </summary>
+            <param name="id">id</param>
+            <param name="value">传参</param>
+        </member>
+        <member name="M:api.Controllers.usersController.Delete(System.Int32)">
+            <summary>
+               DELETE: api/ApiWithActions/5
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="T:api.Startup">
+            <summary>
+            中间件
+            </summary>
+        </member>
+        <member name="M:api.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            中间件
+            </summary>
+        </member>
+        <member name="P:api.Startup.Configuration">
+            <summary>
+            中间件
+            </summary>
+        </member>
+        <member name="M:api.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            注册服务
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:api.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
+            <summary>
+            配置项
+            </summary>
+            <param name="app"></param>
+            <param name="env"></param>
+        </member>
+    </members>
+</doc>
