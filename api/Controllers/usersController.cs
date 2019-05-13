@@ -29,14 +29,8 @@ namespace api.Controllers
         /// </summary>
         public string password { get; set; }
     }
-    /// <summary>
-    /// post 用户信息
-    /// </summary>
-    public class userinfo
-    {/// <summary>
-    /// code
-    /// </summary>
-        public string code { get; set; }
+    public class userdata
+    {
         /// <summary>
         /// 姓名
         /// </summary>
@@ -49,8 +43,23 @@ namespace api.Controllers
         /// 头像地址
         /// </summary>
         public string avatar { get; set; }
-      
+
     }
+    //===============================================================================================
+
+    /// <summary>
+    /// post 用户信息
+    /// </summary>
+    public class userinfo
+    {/// <summary>
+    /// code
+    /// </summary>
+        public int code { get; set; }
+        public userdata data { get; set; }
+        
+    }
+    //===============================================================================================
+
     /// <summary>
     /// 令牌实体类
     /// </summary>
@@ -59,19 +68,39 @@ namespace api.Controllers
         /// <summary>
         ///  状态码
         /// </summary>
-        public string code { get; set; }
+        public int code { get; set; }
         /// <summary>
         ///返回令牌数据
         /// </summary>
-        public string data { get; set; }
+        public tokendata data { get; set; }
         /// <summary>
         /// 返回信息
         /// </summary>
         public string msg { get; set; }
 
     }
+    /// <summary>
+    /// data 类
+    /// </summary>
+    public  class tokendata
+    {
+        /// <summary>
+        /// data 类
+        /// </summary>
+        public   string token { get; set; }
+   
 
+    }
+    //===============================================================================================
+    /// <summary>
+    /// 注销实体类
+    /// </summary>
+    public class Logout
+    {
+        public int code { get; set; }
+        public string data { get; set; }
 
+    }
 
     #endregion
     //===============================================================================================
@@ -129,7 +158,7 @@ namespace api.Controllers
             string password = userjson.password;  
             string Token = ""; //令牌
             Tokenstr Tokenstr = new Tokenstr();
-
+            tokendata tokendatastr = new tokendata();
             SqlHelper.connstr = sqlcon.consql();
             string sql = "select * from web_hr_users where worknu='" + username + "'and password='" +  password + "'"; 
             DataTable user = SqlHelper.GetTable(sql);
@@ -138,16 +167,19 @@ namespace api.Controllers
                 var signature = user.Rows[0]["worknu"].ToString() + "-"+ user.Rows[0]["name"].ToString() + "-" + user.Rows[0]["roles"].ToString() + "-" + user.Rows[0]["avatar"].ToString();
                 Token = TokenHelper.Generate(signature);
                 HttpContext.Session.SetString( Token, signature); 
-                Tokenstr.code = "20000";
-                Tokenstr.data = Token;
+                Tokenstr.code = 20000;
+
+                tokendatastr.token= Token; 
+                Tokenstr.data = tokendatastr;
                 Tokenstr.msg = "返回令牌成功";
              
             }
             else
             {
 
-                Tokenstr.code = "20001";
-                Tokenstr.data = Token;
+                Tokenstr.code = 20001; 
+                tokendatastr.token = "";
+                Tokenstr.data = tokendatastr;
                 Tokenstr.msg= "返回令牌失败";
             }
 
@@ -159,10 +191,11 @@ namespace api.Controllers
         ///  POST:aapi/users/getinfo 获取用户信息 
         /// </summary>
         /// <returns></returns>
-        [HttpPost("getinfo", Name = "GetInfo")]
+        [HttpPost("GetInfo", Name = "GetInfo")]
         public string getInfopost()//获取用户信息
         {
             userinfo info = new userinfo();
+            userdata infodata = new userdata();
             string Token =  Request.Headers["X-Token"];
             var signature = TokenHelper.TokenToSignature(Token);
             string Sessionsignature = HttpContext.Session.GetString(Token);
@@ -172,18 +205,20 @@ namespace api.Controllers
                 string[] userinfo = signature.Split('-');
                 string sql = "select * from web_hr_users where worknu='" + userinfo[0] + "'";
                 DataTable user = SqlHelper.GetTable(sql); 
-                 info.code = "20000";
-                info.name = user.Rows[0]["name"].ToString();
-                 info.roles = user.Rows[0]["roles"].ToString();
-                info.avatar = user.Rows[0]["avatar"].ToString();
+                 info.code = 20000;
+                infodata.name = user.Rows[0]["name"].ToString();
+                infodata.roles = user.Rows[0]["roles"].ToString();
+                infodata.avatar = user.Rows[0]["avatar"].ToString();
+                info.data = infodata;
             }
             else
             {
             
-                info.code = "50008";//非法令牌
-                info.name = "";
-                info.roles = "";
-                info.avatar = "";
+                info.code = 50008;//非法令牌
+                infodata.name = "";
+                infodata.roles = "";
+                infodata.avatar = "";
+                info.data = infodata;
             }
 
              
@@ -191,7 +226,21 @@ namespace api.Controllers
         }
 
         //===============================================================================================
+        /// <summary>
+        /// 登出
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("Logout", Name = "Logout")]
+        public string Logoutpost()//获取用户信息
+        {
+            string Token = Request.Headers["X-Token"];
+            HttpContext.Session.Remove(Token);
+            Logout userout = new Logout();
+            userout.code = 20000;
+            userout.data = "success";
+            return JsonConvert.SerializeObject(userout);
 
+        }
 
        /// <summary>
        /// put

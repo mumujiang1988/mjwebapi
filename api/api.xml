@@ -115,21 +115,6 @@
             code
             </summary>
         </member>
-        <member name="P:api.Controllers.userinfo.name">
-            <summary>
-            姓名
-            </summary>
-        </member>
-        <member name="P:api.Controllers.userinfo.roles">
-            <summary>
-            用户名
-            </summary>
-        </member>
-        <member name="P:api.Controllers.userinfo.avatar">
-            <summary>
-            头像地址
-            </summary>
-        </member>
         <member name="T:api.Controllers.Tokenstr">
             <summary>
             令牌实体类
@@ -148,6 +133,31 @@
         <member name="P:api.Controllers.Tokenstr.msg">
             <summary>
             返回信息
+            </summary>
+        </member>
+        <member name="T:api.Controllers.tokendata">
+            <summary>
+            data 类
+            </summary>
+        </member>
+        <member name="P:api.Controllers.tokendata.token">
+            <summary>
+            data 类
+            </summary>
+        </member>
+        <member name="P:api.Controllers.userdata.name">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="P:api.Controllers.userdata.roles">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:api.Controllers.userdata.avatar">
+            <summary>
+            头像地址
             </summary>
         </member>
         <member name="T:api.Controllers.usersController">
